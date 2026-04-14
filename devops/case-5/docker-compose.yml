@@ -73,6 +73,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - kong-net
 
   product-service:
     image: nginx:alpine
@@ -86,6 +88,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - kong-net
 
   order-service:
     image: nginx:alpine
@@ -99,6 +103,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - kong-net
 
   redis:
     image: redis:alpine
@@ -107,3 +113,5 @@ services:
 
 volumes:
   kong_data:
+networks:
+  kong-net:
