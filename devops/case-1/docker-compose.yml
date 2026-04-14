@@ -1,13 +1,13 @@
 services:
   wordpress:
-    image: wordpress:latest
+    image: wordpress:6.4-php8.2-apache
     ports:
       - "127.0.0.1:8080:80"
     environment:
       WORDPRESS_DB_HOST: mysql
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
     volumes:
       - wordpress_data:/var/www/html
     depends_on:
@@ -17,7 +17,7 @@ services:
       - app_net
 
   mysql:
-    image: mysql:8.0
+    image: mysql:8.0.35
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -38,7 +38,7 @@ services:
       - app_net
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin:5.2.1
     ports:
       - "127.0.0.1:8081:80"
     environment:
@@ -50,7 +50,7 @@ services:
         condition: service_healthy
     networks:
       - app_net
- 
+
 volumes:
   wordpress_data:
   mysql_data:
