@@ -1,34 +1,33 @@
 #!/bin/sh
+set -e
 
-echo "Waiting for Kong to be ready..."
-sleep 10
+echo "Waiting for Kong Admin API..."
+
+until curl -s http://kong:8001 > /dev/null; do
+  sleep 2
+done
 
 echo "Configuring Kong services and routes..."
 
 # Services
-curl -s -X POST http://kong:8001/services \
-  --data name=user-service \
+curl -s -X PUT http://kong:8001/services/user-service \
   --data url=http://user-service:80
 
-curl -s -X POST http://kong:8001/services \
-  --data name=product-service \
+curl -s -X PUT http://kong:8001/services/product-service \
   --data url=http://product-service:80
 
-curl -s -X POST http://kong:8001/services \
-  --data name=order-service \
+curl -s -X PUT http://kong:8001/services/order-service \
   --data url=http://order-service:80
 
 # Routes
-curl -s -X POST http://kong:8001/routes \
-  --data service.name=user-service \
+curl -s -X PUT http://kong:8001/services/user-service/routes/user-route \
   --data paths[]=/api/users
 
-curl -s -X POST http://kong:8001/routes \
-  --data service.name=product-service \
+curl -s -X PUT http://kong:8001/services/product-service/routes/product-route \
   --data paths[]=/api/products
 
-curl -s -X POST http://kong:8001/routes \
-  --data service.name=order-service \
+curl -s -X PUT http://kong:8001/services/order-service/routes/order-route \
   --data paths[]=/api/orders
 
+echo
 echo "Kong configuration done."
