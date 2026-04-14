@@ -1,14 +1,12 @@
-
-version: '3.8'
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - "${ES_PORT}:9200"
+      - "${ES_TRANSPORT_PORT}:9300"
     environment:
       - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ES_JAVA_OPTS=${ES_JAVA_OPTS}
       - xpack.security.enabled=false
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
@@ -20,14 +18,14 @@ services:
       start_period: 20s
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:8.11.0
+    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
     ports:
-      - "5044:5044"
-      - "5000:5000/tcp"
-      - "5000:5000/udp"
-      - "9600:9600"
+      - "${LOGSTASH_BEATS_PORT}:5044"
+      - "${LOGSTASH_TCP_PORT}:5000/tcp"
+      - "${LOGSTASH_UDP_PORT}:5000/udp"
+      - "${LOGSTASH_API_PORT}:9600"
     environment:
-      - LS_JAVA_OPTS=-Xmx256m -Xms256m
+      - LS_JAVA_OPTS=${LS_JAVA_OPTS}
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./logstash/pipeline:/usr/share/logstash/pipeline
@@ -36,19 +34,19 @@ services:
         condition: service_healthy
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.11.0
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
     ports:
-      - "5601:5601"
+      - "${KIBANA_PORT}:5601"
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
     depends_on:
       elasticsearch:
         condition: service_healthy
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:8.11.0
-    user: root
-    command: ["--strict.perms=false"]
+    image: docker.elastic.co/beats/filebeat:${ELASTIC_VERSION}
+    user: ${FILEBEAT_USER}
+    command: ["--strict.perms=${FILEBEAT_STRICT_PERMS}"]
     volumes:
       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
       - /var/log:/var/log:ro
