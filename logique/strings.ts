@@ -3,23 +3,41 @@ const br = () => console.log("-------------------");
 
 // Longueur message sans espaces
 function lengthWithoutSpaces(input: string): number {
-   return input.split(" ").join("").length;
+  if (typeof input !== "string") {
+    throw new TypeError("input must be a string");
+  }
+
+  if (input.length === 0) {
+    return 0;
+  }
+
+  return input.replace(/\s/g, "").length;
 }
 
-console.log(lengthWithoutSpaces("Bonjour le monde !")); br(); // 15 et non 16 comme l'énoncé
-
-
+console.log(lengthWithoutSpaces("Bonjour le monde !")); // 15 et non 16 comme l'énoncé
+br();
 
 
 // Salutation prénom avec majuscule
 function greetFirstName(firstName: string): string {
-   return (
-      "Bonjour " +
-      firstName
-         .split("-")
-         .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-         .join("-")
-   );
+  if (typeof firstName !== "string") {
+    throw new TypeError("firstName must be a string");
+  }
+
+  const trimmed = firstName.trim();
+
+  if (trimmed === "") {
+    return "Bonjour";
+  }
+
+  return (
+    "Bonjour " +
+    trimmed
+      .split("-")
+      .filter(part => part !== "")
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join("-")
+  );
 }
 
 console.log(greetFirstName("jean-pierre")); br(); // "Bonjour Jean-Pierre"
@@ -31,7 +49,15 @@ console.log(greetFirstName("jean-pierre")); br(); // "Bonjour Jean-Pierre"
 
 // Détection point exclamation en fin
 function endsWithExclamation(text: string): boolean {
-   return text.endsWith("!");
+  if (typeof text !== "string") {
+    throw new TypeError("text must be a string");
+  }
+
+  if (text.trim() === "") {
+    return false;
+  }
+
+  return text.trim().endsWith("!");
 }
 
 console.log(endsWithExclamation("Je suis très satisfait !")); br(); // true
@@ -43,7 +69,15 @@ console.log(endsWithExclamation("Je suis très satisfait !")); br(); // true
 
 // Inversion ordre des mots phrase
 function reverseWords1(sentence: string): string {
-   return sentence.split(" ").reverse().join(" ");
+  if (typeof sentence !== "string") {
+    throw new TypeError("sentence must be a string");
+  }
+
+  if (sentence.trim() === "") {
+    return "";
+  }
+
+  return sentence.trim().split(/\s+/).reverse().join(" ");
 }
 
 const frenchPhrase = "Je mange une pomme";
@@ -55,9 +89,16 @@ console.log(reverseWords1(frenchPhrase)); br(); // "pomme une mange Je"
 
 // Comptage occurrences lettre dans texte
 function countLetterOccurrences(text: string, letter: string): number {
-   return text.split(letter).length - 1;
-}
+  if (typeof text !== "string" || typeof letter !== "string") {
+    throw new TypeError("text and letter must be strings");
+  }
 
+  if (letter.length !== 1) {
+    throw new RangeError("letter must contain exactly one character");
+  }
+
+  return text.split(letter).length - 1;
+}
 console.log(countLetterOccurrences("programmation", "m")); br(); // 2
 
 
@@ -66,12 +107,23 @@ console.log(countLetterOccurrences("programmation", "m")); br(); // 2
 
 // Conversion nom vers format JavaScript
 function toCamelCase(value: string): string {
-   return value
-      .split("_")
-      .map((part, index) =>
-         index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)
-      )
-      .join("");
+  if (typeof value !== "string") {
+    throw new TypeError("value must be a string");
+  }
+
+  if (value.trim() === "") {
+    return "";
+  }
+
+  return value
+    .split("_")
+    .filter(part => part !== "")
+    .map((part, index) =>
+      index === 0
+        ? part.toLowerCase()
+        : part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+    )
+    .join("");
 }
 
 console.log(toCamelCase("user_first_name")); br(); // "userFirstName"
@@ -82,13 +134,21 @@ console.log(toCamelCase("user_first_name")); br(); // "userFirstName"
 
 // Analyse voyelles pour sonorité poétique
 function countVowels(text: string): number {
-   const vowels = ["a", "e", "i", "o", "u", "y"];
+  if (typeof text !== "string") {
+    throw new TypeError("text must be a string");
+  }
 
-   return text
-      .toLowerCase()
-      .split("")
-      .filter(char => vowels.includes(char))
-      .length;
+  if (text === "") {
+    return 0;
+  }
+
+  const vowels = ["a", "e", "i", "o", "u", "y"];
+
+  return text
+    .toLowerCase()
+    .split("")
+    .filter(char => vowels.includes(char))
+    .length;
 }
 
 console.log(countVowels("un ver au hasard !")); br(); // 6
@@ -100,12 +160,20 @@ console.log(countVowels("un ver au hasard !")); br(); // 6
 
 // Alternance visuelle pour mots mémorisables
 function alternateCase(text: string): string {
-   return text
-      .split("")
-      .map((char, index) =>
-         index % 2 === 0 ? char.toLowerCase() : char.toUpperCase()
-      )
-      .join("");
+  if (typeof text !== "string") {
+    throw new TypeError("text must be a string");
+  }
+
+  if (text === "") {
+    return "";
+  }
+
+  return text
+    .split("")
+    .map((char, index) =>
+      index % 2 === 0 ? char.toLowerCase() : char.toUpperCase()
+    )
+    .join("");
 }
 
 console.log(alternateCase("password")); br(); // "pAsSwOrD"
@@ -118,10 +186,18 @@ console.log(alternateCase("password")); br(); // "pAsSwOrD"
 
 // Nettoyage répétitions caractères utilisateurs
 function removeDuplicates(text: string): string {
-   return text
-      .split("")
-      .filter((char, index, array) => char !== array[index - 1])
-      .join("");
+  if (typeof text !== "string") {
+    throw new TypeError("text must be a string");
+  }
+
+  if (text === "") {
+    return "";
+  }
+
+  return text
+    .split("")
+    .filter((char, index, array) => char !== array[index - 1])
+    .join("");
 }
 
 const messageUtilisateur = "Bonjouuuur !!! J'ai besoiiiin d'aide....";
@@ -130,14 +206,21 @@ console.log(removeDuplicates(messageUtilisateur)); br(); // "Bonjour ! J'ai beso
 
 
 
-
 // Génération initiales identifiant employé
 function getInitials(fullName: string): string {
-   return fullName
-      .split(" ")
-      .filter(word => word.length > 0)
-      .map(word => word[0].toUpperCase())
-      .join("");
+  if (typeof fullName !== "string") {
+    throw new TypeError("fullName must be a string");
+  }
+
+  if (fullName.trim() === "") {
+    return "";
+  }
+
+  return fullName
+    .trim()
+    .split(/\s+/)
+    .map(word => word[0].toUpperCase())
+    .join("");
 }
 
 console.log(getInitials("Jean Pierre Dupont")); br(); // "JPD"
@@ -152,7 +235,19 @@ console.log(getInitials("Jean Pierre Dupont")); br(); // "JPD"
 
 // Masquage affichage données sensibles
 function maskString(value: string, visibleCount: number): string {
-   return value.slice(-visibleCount);
+  if (typeof value !== "string") {
+    throw new TypeError("value must be a string");
+  }
+
+  if (!Number.isInteger(visibleCount) || visibleCount < 0) {
+    throw new RangeError("visibleCount must be a non-negative integer");
+  }
+
+  if (value === "" || visibleCount === 0) {
+    return "";
+  }
+
+  return value.slice(-visibleCount);
 }
 
 const cardNumber = "1234567890123456";
