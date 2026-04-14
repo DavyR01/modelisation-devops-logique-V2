@@ -8,8 +8,34 @@ interface User {
 }
 
 // Filtrage des utilisateurs selon un état
-function filterByProperty1(items: User[], property: keyof User, value: User[keyof User]) {
-   return items.filter(item => item[property] === value);
+function filterByProperty1(
+   items: User[],
+   property: keyof User,
+   value: User[keyof User]
+) {
+   if (!Array.isArray(items)) {
+      throw new TypeError("items must be an array");
+   }
+
+   if (typeof property !== "string" || property.trim() === "") {
+      throw new TypeError("property must be a non-empty string");
+   }
+
+   if (items.length === 0) {
+      return [];
+   }
+
+   return items.filter(item => {
+      if (typeof item !== "object" || item === null) {
+         throw new TypeError("each item must be an object");
+      }
+
+      if (!(property in item)) {
+         return false;
+      }
+
+      return item[property] === value;
+   });
 }
 
 const users: User[] = [
@@ -35,9 +61,29 @@ interface Product {
 
 // Regroupement des produits par catégorie
 function groupBy1(items: Product[], property: keyof Product) {
+   if (!Array.isArray(items)) {
+      throw new TypeError("items must be an array");
+   }
+
+   if (typeof property !== "string" || property.trim() === "") {
+      throw new TypeError("property must be a non-empty string");
+   }
+
    const result: Record<string, Product[]> = {};
 
+   if (items.length === 0) {
+      return result;
+   }
+
    for (const item of items) {
+      if (typeof item !== "object" || item === null) {
+         throw new TypeError("each item must be an object");
+      }
+
+      if (!(property in item)) {
+         continue;
+      }
+
       const key = String(item[property]);
 
       if (!result[key]) {
