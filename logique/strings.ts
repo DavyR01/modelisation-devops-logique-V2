@@ -142,13 +142,16 @@ function countVowels(text: string): number {
     return 0;
   }
 
-  const vowels = ["a", "e", "i", "o", "u", "y"];
+  const vowels = new Set(["a", "e", "i", "o", "u", "y"]);
+  let count = 0;
 
-  return text
-    .toLowerCase()
-    .split("")
-    .filter(char => vowels.includes(char))
-    .length;
+  for (const char of text.toLowerCase()) {
+    if (vowels.has(char)) {
+      count++;
+    }
+  }
+
+  return count;
 }
 
 console.log(countVowels("un ver au hasard !")); br(); // 6
