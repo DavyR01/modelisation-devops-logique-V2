@@ -16,6 +16,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - mattermost-network
 
   postgres:
     image: postgres:14
@@ -30,9 +32,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - mattermost-network
 
 volumes:
   mattermost_data:
   mattermost_logs:
   mattermost_plugins:
   postgres_data:
+
+networks:
+  mattermost-network:
+    driver: bridge
