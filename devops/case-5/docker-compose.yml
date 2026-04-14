@@ -52,6 +52,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  
+  kong-init:
+    image: curlimages/curl:latest
+    depends_on:
+      - kong
+    volumes:
+      - ./kong/init-kong.sh:/init-kong.sh
+    entrypoint: ["/bin/sh", "/init-kong.sh"]
 
   user-service:
     image: nginx:alpine
